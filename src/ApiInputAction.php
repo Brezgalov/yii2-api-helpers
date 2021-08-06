@@ -20,6 +20,16 @@ class ApiInputAction extends Action
     /**
      * @var string
      */
+    public $unknownValidationErrorText = 'Unknown error 1';
+
+    /**
+     * @var string
+     */
+    public $unknownExecutionErrorText = 'Unknown error 2';
+
+    /**
+     * @var string
+     */
     public $modelClass;
 
     /**
@@ -90,7 +100,7 @@ class ApiInputAction extends Action
         $form->load($input, '');
         if (!$form->validate()) {
             if (!$form->hasErrors()) {
-                $form->addError('class', 'Unknown error 1');
+                $form->addError('class', $this->unknownValidationErrorText);
             }
 
             return $form;
@@ -99,7 +109,7 @@ class ApiInputAction extends Action
         $result = $form->getResult();
         if ($result === false) {
             if (!$form->hasErrors()) {
-                $form->addError('class', 'Unknown error 2');
+                $form->addError('class', $this->unknownExecutionErrorText);
             }
 
             return $form;
