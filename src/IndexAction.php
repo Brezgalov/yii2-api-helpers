@@ -51,7 +51,9 @@ class IndexAction extends \yii\rest\IndexAction
 
         $classPropertiesRequired = ['dataProviderClass', 'searchClass'];
         foreach ($classPropertiesRequired as $property) {
-            if (!isset($this->{$property}) || !class_exists($this->{$property})) {
+            if (
+                !isset($this->{$property}) ||
+                is_string($this->{$property}) && !class_exists($this->{$property})) {
                 throw new ServerErrorHttpException("У экшена не указано свойство {$property}");
             }
         }

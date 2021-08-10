@@ -91,7 +91,13 @@ class ApiInputAction extends Action
         );
 
         /* @var $form IApiInputForm */
-        $form = Yii::$container->get($this->modelClass, $this->formConstructParams);
+        if (is_string($this->modelClass)) {
+            $form = Yii::$container->get($this->modelClass, $this->formConstructParams);
+        } elseif ($this->modelClass instanceof IApiInputForm) {
+            $form = $this->modelClass;
+        } else {
+            throw new InvalidConfigException('Не удается создать форму ввода для экшена');
+        }
 
         if ($this->checkAccess) {
             call_user_func($this->checkAccess, $this->id, $form);
