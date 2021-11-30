@@ -3,10 +3,10 @@
 namespace Brezgalov\ApiHelpers;
 
 use Yii;
-use Brezgalov\ApiHelpers\ISearch;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\data\BaseDataProvider;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -19,6 +19,11 @@ class IndexAction extends \yii\rest\IndexAction
      * @var string
      */
     public $modelClass = '';
+
+    /**
+     * @var bool
+     */
+    public $useDefaultOrder = true;
 
     /**
      * @var array
@@ -53,33 +58,31 @@ class IndexAction extends \yii\rest\IndexAction
         foreach ($classPropertiesRequired as $property) {
             if (
                 !isset($this->{$property}) ||
-                is_string($this->{$property}) && !class_exists($this->{$property})) {
+                is_string($this->{$property}) && !class_exists($this->{$property})
+            ) {
                 throw new ServerErrorHttpException("У экшена не указано свойство {$property}");
             }
         }
 
         $search = $this->prepareSearchModel($requestParams);
-        if (!$search->validate()) {
+        if ($search && !$search->validate()) {
             \Yii::$app->response->statusCode = 422;
             return $search;
         }
 
-        $paging = false;
-        if ($this->paginationActive) {
-            $paging = [
-                'params' => $requestParams,
-            ];
+        $dataProvider = $this->dataProviderClass instanceof BaseDataProvider ? $this->dataProviderClass : Yii::createObject(['class' => $this->dataProviderClass]);
+        if ($search && $dataProvider instanceof ActiveDataProvider) {
+            $dataProvider->query = $search->getQuery();
         }
 
-        return Yii::createObject([
-            'class' => $this->dataProviderClass,
-            'query' => $search->getQuery(),
-            'pagination' => $paging,
-            'sort' => [
-                'params' => $requestParams,
-                'defaultOrder' => $this->defaultOrder,
-            ],
-        ]);
+        $dataProvider->setPagination($this->paginationActive ? ['params' => $requestParams] : false);
+        $dataProvider->setSort(['params' => $requestParams]);
+
+        if ($this->useDefaultOrder) {
+            $dataProvider->sort->defaultOrder = $this->defaultOrder;
+        }
+
+        return $dataProvider;
     }
 
     /**
