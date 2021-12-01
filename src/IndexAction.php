@@ -70,7 +70,19 @@ class IndexAction extends \yii\rest\IndexAction
             return $search;
         }
 
-        $dataProvider = $this->dataProviderClass instanceof BaseDataProvider ? $this->dataProviderClass : Yii::createObject(['class' => $this->dataProviderClass]);
+        $dataProvider = null;
+        if ($this->dataProviderClass instanceof BaseDataProvider) {
+            $dataProvider = $this->dataProviderClass;
+        }
+
+        if (is_string($this->dataProviderClass) || is_array($this->dataProviderClass)) {
+            $dataProvider = Yii::createObject(['class' => $this->dataProviderClass]);
+        }
+
+        if (empty($dataProvider)) {
+            throw new \Exception('Не могу определить DataProvider');
+        }
+
         if ($search && $dataProvider instanceof ActiveDataProvider) {
             $dataProvider->query = $search->getQuery();
         }
@@ -94,7 +106,7 @@ class IndexAction extends \yii\rest\IndexAction
     {
         $search = null;
 
-        if (is_string($this->searchClass)) {
+        if (is_string($this->searchClass) || is_array($this->searchClass)) {
             $search = Yii::createObject($this->searchClass);
         } elseif ($this->searchClass instanceof ISearch) {
             $search = $this->searchClass;
