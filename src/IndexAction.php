@@ -76,7 +76,7 @@ class IndexAction extends \yii\rest\IndexAction
         }
 
         if (is_string($this->dataProviderClass) || is_array($this->dataProviderClass)) {
-            $dataProvider = Yii::createObject(['class' => $this->dataProviderClass]);
+            $dataProvider = Yii::createObject($this->dataProviderClass);
         }
 
         if (empty($dataProvider)) {
