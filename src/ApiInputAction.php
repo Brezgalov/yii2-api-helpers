@@ -91,8 +91,8 @@ class ApiInputAction extends Action
         );
 
         /* @var $form IApiInputForm */
-        if (is_string($this->modelClass)) {
-            $form = Yii::$container->get($this->modelClass, $this->formConstructParams);
+        if (is_string($this->modelClass) || is_array($this->modelClass)) {
+            $form = Yii::createObject($this->modelClass);
         } elseif ($this->modelClass instanceof IApiInputForm) {
             $form = $this->modelClass;
         } else {
