@@ -10,6 +10,8 @@ use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\db\Exception;
 use yii\di\NotInstantiableException;
+use yii\mutex\Mutex;
+use yii\web\ServerErrorHttpException;
 
 /**
  * Class ApiInputAction
@@ -43,6 +45,84 @@ class ApiInputAction extends Action
     public $formConstructParams = [];
 
     /**
+     * @var Mutex
+     */
+    public $mutexComp;
+
+    /**
+     * @var IApiMutexHelper
+     */
+    public $mutexHelper;
+
+    /**
+     * @var bool
+     */
+    public $useMutex = true;
+
+    /**
+     * seconds before mutex exception
+     * @var int
+     */
+    public $mutexTimeout = 30;
+
+    /**
+     * @var string
+     */
+    private $shouldRelease;
+
+    /**
+     * ApiInputAction constructor.
+     * @param $id
+     * @param $controller
+     * @param array $config
+     * @throws InvalidConfigException
+     */
+    public function __construct($id, $controller, $config = [])
+    {
+        parent::__construct($id, $controller, $config);
+
+        if (empty($this->mutexComp) && \Yii::$app->has('mutex')) {
+            $this->mutexComp = \Yii::$app->get('mutex');
+        }
+
+        if (empty($this->mutexHelper)) {
+            $this->mutexHelper = new ApiMutexHelper();
+        }
+    }
+
+    /**
+     * lock action if we can
+     * @return bool
+     */
+    protected function acquireMutex()
+    {
+        if (!$this->useMutex || empty($this->mutexHelper) || empty($this->mutexComp)) {
+            return true;
+        }
+
+        $this->shouldRelease = $this->mutexHelper->buildActionMutexName();
+
+        if (!$this->mutexComp->acquire($this->shouldRelease, $this->mutexTimeout)) {
+            throw new ServerErrorHttpException("Lock can not be acquired after {$this->mutexTimeout} seconds");
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function releaseMutex()
+    {
+        if ($this->shouldRelease && $this->mutexComp) {
+            $this->mutexComp->release($this->shouldRelease);
+            $this->shouldRelease = null;
+        }
+
+        return true;
+    }
+
+    /**
      * @return IApiInputForm|false[]|mixed|Model
      * @throws Exception
      * @throws InvalidConfigException
@@ -50,6 +130,9 @@ class ApiInputAction extends Action
      */
     public function run()
     {
+        // Mutex предотвращает атаки и баги связанные с выполнением двух миграций параллельно
+        $this->acquireMutex();
+
         $trans = Yii::$app->db->beginTransaction();
 
         try {
@@ -74,6 +157,8 @@ class ApiInputAction extends Action
         } else {
             $trans->commit();
         }
+
+        $this->releaseMutex();
 
         return $result;
     }
