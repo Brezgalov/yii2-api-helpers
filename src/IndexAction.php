@@ -87,7 +87,12 @@ class IndexAction extends \yii\rest\IndexAction
             $dataProvider->query = $search->getQuery();
         }
 
-        $dataProvider->setPagination($this->paginationActive ? ['params' => $requestParams] : false);
+        if ($this->paginationActive) {
+            $dataProvider->pagination->params = $requestParams;
+        } else {
+            $dataProvider->setPagination(false);
+        }
+
         $dataProvider->setSort(['params' => $requestParams]);
 
         if ($this->useDefaultOrder) {
