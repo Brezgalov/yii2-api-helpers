@@ -8,6 +8,7 @@ use Brezgalov\ApiHelpers\v2\Behaviors\Action\TransactionBehavior;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnFailEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnSuccessEvent;
+use Brezgalov\ApiHelpers\v2\Formatters\ModelResultFormatter;
 use yii\base\InvalidConfigException;
 use yii\base\Action as BaseAction;
 use Yii;
@@ -32,7 +33,7 @@ class Action extends BaseAction
     /**
      * @var IFormatter
      */
-    public $formatter;
+    public $formatter = ModelResultFormatter::class;
 
     /**
      * @var string[]
@@ -118,6 +119,15 @@ class Action extends BaseAction
         }
 
         $result = null;
+        $formatter = null;
+
+        if ($this->formatter) {
+            if (is_string($this->formatter) || is_array($this->formatter)) {
+                $formatter = Yii::createObject($this->formatter);
+            } elseif ($this->formatter instanceof IFormatter) {
+                $formatter = $this->formatter;
+            }
+        }
 
         $this->beforeMethod();
         try {
@@ -132,7 +142,7 @@ class Action extends BaseAction
         } catch (\Exception $ex) {
             $this->onException($ex);
 
-            if (empty($this->formatter)) {
+            if (empty($formatter)) {
                 throw $ex;
             }
 
@@ -147,6 +157,6 @@ class Action extends BaseAction
             }
         }
 
-        return $this->formatter instanceof IFormatter ? $this->formatter->format($service, $result) : $result;
+        return $formatter instanceof IFormatter ? $formatter->format($service, $result) : $result;
     }
 }
