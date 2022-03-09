@@ -68,7 +68,7 @@ class MutexBehavior extends Behavior
     {
         $this->mutexName = $this->mutexHelper->buildActionMutexName();
 
-        if (!$this->mutexComp->acquire($this->shouldRelease, $this->mutexTimeout)) {
+        if (!$this->mutexComp->acquire($this->mutexName, $this->mutexTimeout)) {
             throw new ErrorException("Lock can not be acquired after {$this->mutexTimeout} seconds");
         }
     }
