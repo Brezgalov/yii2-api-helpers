@@ -6,7 +6,7 @@ use yii\db\Connection;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
-abstract class MysqlAccessHelper
+abstract class MysqlAccessHelper implements IDataAccessHelper
 {
     /**
      * @return string
@@ -33,13 +33,12 @@ abstract class MysqlAccessHelper
 
     /**
      * @param array $columns
-     * @param Connection|null $db
      * @return array|false|mixed
      * @throws \Exception
      */
-    public static function insert(array $columns, Connection $db = null)
+    public function insert(array $columns)
     {
-        $db = $db ?: \Yii::$app->db;
+        $db = \Yii::$app->db;
         $res = $db->schema->insert(static::getTable(), $columns);
 
         return is_array($res) ? ArrayHelper::getValue($res, static::getPrimaryKeyName()) : $res;
@@ -48,12 +47,11 @@ abstract class MysqlAccessHelper
     /**
      * @param $condition - можно передать id как есть, он превратится в ['id' => $condition]
      * @param array $columns
-     * @param Connection|null $db
-     * @return \yii\db\Command
+     * @return int
      */
-    public static function update($condition, array $columns, Connection $db = null)
+    public function update($condition, array $columns)
     {
-        $db = $db ?: \Yii::$app->db;
+        $db = \Yii::$app->db;
 
         if (is_integer($condition) || is_string($condition)) {
             $condition = [static::getPrimaryKeyName() => $condition];
