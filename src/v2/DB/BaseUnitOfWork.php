@@ -20,6 +20,9 @@ class BaseUnitOfWork
             $dataHelper->update($id, $dto->toArray());
         } else {
             $id = $dataHelper->insert($dto->toArray());
+            if ($id) {
+                $id =  intval($id);
+            }
         }
 
         return $id;
