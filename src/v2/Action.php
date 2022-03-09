@@ -46,11 +46,13 @@ class Action extends BaseAction
 
     /**
      * Action constructor.
+     * @param string $id
+     * @param $controller
      * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct($id, $controller, $config = [])
     {
-        parent::__construct($config);
+        parent::__construct($id, $controller, $config);
 
         $this->attachBehaviors($this->behaviors);
     }
