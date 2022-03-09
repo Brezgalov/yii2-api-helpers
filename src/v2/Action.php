@@ -2,6 +2,8 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\v2\Behaviors\Action\DelayedEventsBehavior;
+use Brezgalov\ApiHelpers\v2\Behaviors\Action\MutexBehavior;
 use Brezgalov\ApiHelpers\v2\Behaviors\Action\TransactionBehavior;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnFailEvent;
@@ -37,6 +39,8 @@ class Action extends BaseAction
      */
     public $behaviors = [
         TransactionBehavior::class,
+        MutexBehavior::class,
+        DelayedEventsBehavior::class,
     ];
 
     /**
