@@ -59,4 +59,20 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
 
         return $db->createCommand()->update(static::getTable(), $columns, $condition)->execute();
     }
+
+    /**
+     * @param array|string|null $condition
+     * @return int
+     * @throws \yii\db\Exception
+     */
+    public function delete($condition = null)
+    {
+        $db = \Yii::$app->db;
+
+        if ($condition) {
+            return $db->createCommand()->delete(static::getTable(), $condition)->execute();
+        } else {
+            return $db->createCommand("DELETE FROM " . static::getTable())->execute();
+        }
+    }
 }

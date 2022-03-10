@@ -32,4 +32,11 @@ interface IDataAccessHelper
      * @return int
      */
     public function update($condition, array $columns);
+
+    /**
+     * @param array|string|null $condition
+     * @return int
+     * @throws \yii\db\Exception
+     */
+    public function delete($condition = null);
 }
