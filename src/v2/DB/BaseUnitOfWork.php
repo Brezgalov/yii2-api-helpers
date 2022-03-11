@@ -14,17 +14,21 @@ class BaseUnitOfWork
      */
     public function storeDto(IDTO $dto, IDataAccessHelper $dataHelper)
     {
-        $id = $dto->getId();
-
         if ($dto->isNew()) {
             $id = $dataHelper->insert($dto->toArray());
+
             if ($id) {
                 $dto->setId($id);
+            } else {
+                return false;
             }
         } else {
-            $dataHelper->update($id, $dto->toArray());
+            $success = $dataHelper->update($dto->getId(), $dto->toArray());
+            if ($success) {
+                return $dto->getId();
+            } else {
+                return false;
+            }
         }
-
-        return $id;
     }
 }
