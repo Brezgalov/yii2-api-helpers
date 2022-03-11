@@ -16,12 +16,12 @@ class BaseUnitOfWork
     {
         $id = $dto->getId();
 
-        if ($id) {
+        if ($dto->isNew()) {
             $dataHelper->update($id, $dto->toArray());
         } else {
             $id = $dataHelper->insert($dto->toArray());
             if ($id) {
-                $id =  intval($id);
+                $dto->setId($id);
             }
         }
 
