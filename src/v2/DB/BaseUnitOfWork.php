@@ -17,12 +17,12 @@ class BaseUnitOfWork
         $id = $dto->getId();
 
         if ($dto->isNew()) {
-            $dataHelper->update($id, $dto->toArray());
-        } else {
             $id = $dataHelper->insert($dto->toArray());
             if ($id) {
                 $dto->setId($id);
             }
+        } else {
+            $dataHelper->update($id, $dto->toArray());
         }
 
         return $id;
