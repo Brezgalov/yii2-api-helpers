@@ -17,18 +17,19 @@ class BaseUnitOfWork
         if ($dto->isNew()) {
             $id = $dataHelper->insert($dto->toArray());
 
-            if ($id) {
-                $dto->setId($id);
-            } else {
+            if (!$id) {
                 return false;
             }
+
+            $dto->setId($id);
         } else {
             $success = $dataHelper->update($dto->getId(), $dto->toArray());
-            if ($success) {
-                return $dto->getId();
-            } else {
+
+            if (!$success) {
                 return false;
             }
         }
+
+        return $dto->getId();
     }
 }
