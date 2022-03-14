@@ -38,11 +38,13 @@ abstract class BaseDTO implements IDTO
 
     /**
      * @param array $data
-     * @return bool|void
+     * @return bool
      */
     public function loadFromDbData(array $data)
     {
         $this->id = (int)$data['id'];
+
+        return true;
     }
 
     /**
