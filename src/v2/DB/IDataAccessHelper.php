@@ -5,16 +5,14 @@ namespace Brezgalov\ApiHelpers\v2\DB;
 interface IDataAccessHelper
 {
     /**
-     * @deprecated
      * @return string
      */
-    public function getPrimaryKeyName();
+    public static function getPrimaryKeyName();
 
     /**
-     * @deprecated
      * @return string
      */
-    public function getTable();
+    public static function getTable();
 
     /**
      * @deprecated

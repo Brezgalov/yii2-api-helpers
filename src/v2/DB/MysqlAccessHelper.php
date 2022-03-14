@@ -11,7 +11,7 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
     /**
      * @return string
      */
-    public function getPrimaryKeyName()
+    public static function getPrimaryKeyName()
     {
         return 'id';
     }
@@ -19,7 +19,7 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
     /**
      * @return string
      */
-    public abstract function getTable();
+    public abstract static function getTable();
 
     /**
      * @return Query
