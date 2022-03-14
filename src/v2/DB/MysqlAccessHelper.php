@@ -11,7 +11,7 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
     /**
      * @return string
      */
-    public static function getPrimaryKeyName()
+    public function getPrimaryKeyName()
     {
         return 'id';
     }
@@ -19,12 +19,12 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
     /**
      * @return string
      */
-    public abstract static function getTable();
+    public abstract function getTable();
 
     /**
      * @return Query
      */
-    public static function query()
+    public function query()
     {
         return (new Query())
             ->select('*')
@@ -39,9 +39,9 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
     public function insert(array $columns)
     {
         $db = \Yii::$app->db;
-        $res = $db->schema->insert(static::getTable(), $columns);
+        $res = $db->schema->insert($this->getTable(), $columns);
 
-        return is_array($res) ? ArrayHelper::getValue($res, static::getPrimaryKeyName()) : $res;
+        return is_array($res) ? ArrayHelper::getValue($res, $this->getPrimaryKeyName()) : $res;
     }
 
     /**
@@ -54,10 +54,10 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
         $db = \Yii::$app->db;
 
         if (is_integer($condition) || is_string($condition)) {
-            $condition = [static::getPrimaryKeyName() => $condition];
+            $condition = [$this->getPrimaryKeyName() => $condition];
         }
 
-        return $db->createCommand()->update(static::getTable(), $columns, $condition)->execute();
+        return $db->createCommand()->update($this->getTable(), $columns, $condition)->execute();
     }
 
     /**
@@ -70,9 +70,9 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
         $db = \Yii::$app->db;
 
         if ($condition) {
-            return $db->createCommand()->delete(static::getTable(), $condition)->execute();
+            return $db->createCommand()->delete($this->getTable(), $condition)->execute();
         } else {
-            return $db->createCommand("DELETE FROM " . static::getTable())->execute();
+            return $db->createCommand("DELETE FROM " . $this->getTable())->execute();
         }
     }
 }
