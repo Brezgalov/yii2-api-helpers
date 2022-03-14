@@ -14,7 +14,7 @@ abstract class BaseDTO implements IDTO
      */
     public function isNew()
     {
-        return !empty($this->id);
+        return empty($this->id);
     }
 
     /**
