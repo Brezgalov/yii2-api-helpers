@@ -24,6 +24,11 @@ class ViewResultFormatter extends Component implements IFormatter
     ];
 
     /**
+     * @var bool
+     */
+    public $layout = true;
+
+    /**
      * @var string
      */
     public $title;
@@ -81,6 +86,8 @@ class ViewResultFormatter extends Component implements IFormatter
         $context = $this->pickViewContext();
         $method = $this->pickRenderMode();
 
-        return call_user_func([Yii::$app->view, $method], $this->view, $params, $context);
+        $html = call_user_func([Yii::$app->view, $method], $this->view, $params, $context);
+
+        return $this->layout ? Yii::$app->controller->renderContent($html) : $html;
     }
 }
