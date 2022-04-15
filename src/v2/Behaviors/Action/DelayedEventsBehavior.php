@@ -10,24 +10,6 @@ use yii\base\InvalidConfigException;
 class DelayedEventsBehavior extends Behavior
 {
     /**
-     * @var string
-     */
-    public $componentName = "DES";
-
-    /**
-     * @return DelayedEventsStorage
-     * @throws InvalidConfigException
-     */
-    public function getStore()
-    {
-        if (!\Yii::$app->has($this->componentName)) {
-            throw new InvalidConfigException("Component \"{$this->componentName}\" can not be found in app");
-        }
-
-        return \Yii::$app->get($this->componentName);
-    }
-
-    /**
      * @return string[]
      */
     public function events()
@@ -42,6 +24,6 @@ class DelayedEventsBehavior extends Behavior
      */
     public function flush()
     {
-        $this->getStore()->fireEvents();
+        DelayedEventsStorage::fireEvents();
     }
 }

@@ -9,32 +9,32 @@ class DelayedEventsStorage extends Component
     /**
      * @var IDelayedEvent[]
      */
-    protected $events = [];
+    protected static $events = [];
 
     /**
      * @var IDelayedEvent[]
      */
-    protected $eventsFired = [];
+    protected static $eventsFired = [];
 
     /**
      * @return IDelayedEvent[]
      */
-    public function getEvents()
+    public static function getEvents()
     {
-        return $this->events;
+        return static::$events;
     }
 
     /**
      * Use this func to delay some code for later use
      *
      * @param IDelayedEvent $event
-     * @return $this
+     * @return bool
      */
-    public function delayEvent(IDelayedEvent $event)
+    public static function delayEvent(IDelayedEvent $event)
     {
-        $this->events[] = $event;
+        static::$events[] = $event;
 
-        return $this;
+        return true;
     }
 
     /**
@@ -42,13 +42,13 @@ class DelayedEventsStorage extends Component
      *
      * @return bool
      */
-    public function fireEvents()
+    public static function fireEvents()
     {
-        foreach ($this->events as $key => $event) {
+        foreach (static::$events as $key => $event) {
             $event->run();
 
-            $this->eventsFired[] = $event;
-            unset($this->events[$key]);
+            static::$eventsFired[] = $event;
+            unset(static::$events[$key]);
         }
 
         return true;
@@ -58,9 +58,9 @@ class DelayedEventsStorage extends Component
      * Remove delayed events
      * @return bool
      */
-    public function clearEvents()
+    public static function clearEvents()
     {
-        $this->events = [];
+        static::$events = [];
 
         return true;
     }
