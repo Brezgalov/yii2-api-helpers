@@ -49,7 +49,7 @@ class RenderAction extends BaseAction
             $formatter->title = $this->title;
             $formatter->view = $this->view;
             $formatter->mode = $this->mode;
-            $formatter->viewContex = $this->viewContext;
+            $formatter->viewContext = $this->viewContext;
         }
 
         return $formatter;
