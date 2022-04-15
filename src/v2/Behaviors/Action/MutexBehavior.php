@@ -3,7 +3,7 @@
 namespace Brezgalov\ApiHelpers\v2\Behaviors\Action;
 
 use Brezgalov\ApiHelpers\ApiMutexHelper;
-use Brezgalov\ApiHelpers\v2\Action;
+use Brezgalov\ApiHelpers\v2\BaseAction;
 use yii\base\Behavior;
 use yii\base\ErrorException;
 use yii\mutex\Mutex;
@@ -54,10 +54,10 @@ class MutexBehavior extends Behavior
     public function events()
     {
         return [
-            Action::EVENT_BEFORE_METHOD => 'aquire',
-            Action::EVENT_ON_SUCCESS => 'release',
-            Action::EVENT_ON_FAIL => 'release',
-            Action::EVENT_ON_EXCEPTION => 'release',
+            BaseAction::EVENT_BEFORE_METHOD => 'aquire',
+            BaseAction::EVENT_ON_SUCCESS => 'release',
+            BaseAction::EVENT_ON_FAIL => 'release',
+            BaseAction::EVENT_ON_EXCEPTION => 'release',
         ];
     }
 

@@ -2,7 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2\Behaviors\Action;
 
-use Brezgalov\ApiHelpers\v2\Action;
+use Brezgalov\ApiHelpers\v2\BaseAction;
 use yii\base\Behavior;
 use yii\db\Connection;
 use yii\db\Transaction;
@@ -39,10 +39,10 @@ class TransactionBehavior extends Behavior
     public function events()
     {
         return [
-            Action::EVENT_BEFORE_METHOD => 'start',
-            Action::EVENT_ON_EXCEPTION => 'rollBack',
-            Action::EVENT_ON_FAIL => 'rollBack',
-            Action::EVENT_ON_SUCCESS => 'flush',
+            BaseAction::EVENT_BEFORE_METHOD => 'start',
+            BaseAction::EVENT_ON_EXCEPTION => 'rollBack',
+            BaseAction::EVENT_ON_FAIL => 'rollBack',
+            BaseAction::EVENT_ON_SUCCESS => 'flush',
         ];
     }
 
