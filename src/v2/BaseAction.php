@@ -93,6 +93,24 @@ abstract class BaseAction extends BaseActionYii2
     }
 
     /**
+     * @return IFormatter|null
+     */
+    public function getFormatter()
+    {
+        if (empty($this->formatter)) {
+            return null;
+        }
+
+        if (is_string($this->formatter) || is_array($this->formatter)) {
+            return Yii::createObject($this->formatter);
+        } elseif ($this->formatter instanceof IFormatter) {
+            return $this->formatter;
+        }
+
+        return null;
+    }
+
+    /**
      * @return \Exception|false|mixed
      * @throws \Exception
      */
@@ -113,15 +131,7 @@ abstract class BaseAction extends BaseActionYii2
         }
 
         $result = null;
-        $formatter = null;
-
-        if ($this->formatter) {
-            if (is_string($this->formatter) || is_array($this->formatter)) {
-                $formatter = Yii::createObject($this->formatter);
-            } elseif ($this->formatter instanceof IFormatter) {
-                $formatter = $this->formatter;
-            }
-        }
+        $formatter = $this->getFormatter();
 
         $this->beforeMethod();
         try {
