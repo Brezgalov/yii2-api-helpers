@@ -4,6 +4,7 @@ namespace Brezgalov\ApiHelpers\v2;
 
 use Brezgalov\ApiHelpers\v2\Formatters\ViewResultFormatter;
 use yii\base\ViewContextInterface;
+use yii\base\Model;
 
 class RenderAction extends BaseAction
 {
@@ -53,5 +54,18 @@ class RenderAction extends BaseAction
         }
 
         return $formatter;
+    }
+
+    /**
+     * @param mixed $result
+     * @return bool
+     */
+    protected function resultIsFailure($result)
+    {
+        if ($result instanceof Model && $result->hasErrors()) {
+            return true;
+        }
+
+        return parent::resultIsFailure($result);
     }
 }

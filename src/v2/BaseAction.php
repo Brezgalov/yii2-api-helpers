@@ -111,6 +111,15 @@ abstract class BaseAction extends BaseActionYii2
     }
 
     /**
+     * @param mixed $result
+     * @return bool
+     */
+    protected function resultIsFailure($result)
+    {
+        return $result instanceof \Exception || $result === false;
+    }
+
+    /**
      * @return \Exception|false|mixed
      * @throws \Exception
      */
@@ -153,12 +162,10 @@ abstract class BaseAction extends BaseActionYii2
             $result = $ex;
         }
 
-        if (!($result instanceof \Exception)) {
-            if ($result === false) {
-                $this->onFail($service);
-            } else {
-                $this->onSuccess($service, $result);
-            }
+        if ($this->resultIsFailure($result)) {
+            $this->onFail($service);
+        } else {
+            $this->onSuccess($service, $result);
         }
 
         return $formatter instanceof IFormatter ? $formatter->format($service, $result) : $result;
