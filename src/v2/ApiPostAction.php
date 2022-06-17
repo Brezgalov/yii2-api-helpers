@@ -17,17 +17,24 @@ use Yii;
  */
 class ApiPostAction extends BaseAction
 {
+    const BEHAVIOR_KEY_TRANSACTION = 'transaction';
+    const BEHAVIOR_KEY_MUTEX = 'mutex';
+    const BEHAVIOR_KEY_DELAYED_EVENTS = 'delayedEvents';
+
     /**
      * @var IFormatter
      */
     public $formatter = ModelResultFormatter::class;
 
     /**
-     * @var string[]
+     * @return string[]
      */
-    public $behaviors = [
-        TransactionBehavior::class,
-        MutexBehavior::class,
-        DelayedEventsBehavior::class,
-    ];
+    protected function getDefaultBehaviors()
+    {
+        return [
+            static::BEHAVIOR_KEY_TRANSACTION => TransactionBehavior::class,
+            static::BEHAVIOR_KEY_MUTEX  => MutexBehavior::class,
+            static::BEHAVIOR_KEY_DELAYED_EVENTS  => DelayedEventsBehavior::class,
+        ];
+    }
 }

@@ -46,7 +46,19 @@ abstract class BaseAction extends BaseActionYii2
     {
         parent::__construct($id, $controller, $config);
 
-        $this->attachBehaviors($this->behaviors);
+        $this->attachBehaviors(
+            array_filter(
+                array_merge($this->getDefaultBehaviors(), $this->behaviors)
+            )
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultBehaviors()
+    {
+        return [];
     }
 
     /**
