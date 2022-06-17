@@ -10,14 +10,12 @@ use yii\base\InvalidConfigException;
 use Yii;
 
 /**
- * Class Action
- *
- * @deprecated Вместо этого класса лучше использовать ApiGetAction и ApiPostAction.
- * ApiPostAction - идентичен Action, а ApiGetAction не имеет избыточных поведений
+ * Class ApiPostAction
+ * Класс представляющий действия связанные с изменением состояния системы
  *
  * @package Brezgalov\ApiHelpers\v2
  */
-class Action extends BaseAction
+class ApiPostAction extends BaseAction
 {
     /**
      * @var IFormatter
