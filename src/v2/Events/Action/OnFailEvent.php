@@ -10,4 +10,14 @@ class OnFailEvent extends Event
      * @var object
      */
     public $service;
+
+    /**
+     * @var mixed
+     */
+    public $result;
+
+    /**
+     * @var mixed
+     */
+    public $resultFormatted;
 }

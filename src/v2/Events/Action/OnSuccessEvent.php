@@ -15,4 +15,9 @@ class OnSuccessEvent extends Event
      * @var mixed
      */
     public $result;
+
+    /**
+     * @var mixed
+     */
+    public $resultFormatted;
 }

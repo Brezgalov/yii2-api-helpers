@@ -82,11 +82,15 @@ abstract class BaseAction extends BaseActionYii2
 
     /**
      * @param object $service
+     * @param mixed $result
+     * @param mixed $resultFormatted
      */
-    public function onFail($service)
+    public function onFail($service, $result, $resultFormatted)
     {
         $failEvent = new OnFailEvent();
         $failEvent->service = $service;
+        $failEvent->result = $result;
+        $failEvent->resultFormatted = $resultFormatted;
 
         $this->trigger(self::EVENT_ON_FAIL, $failEvent);
     }
@@ -94,12 +98,14 @@ abstract class BaseAction extends BaseActionYii2
     /**
      * @param object $service
      * @param mixed $result
+     * @param mixed $resultFormatted
      */
-    public function onSuccess($service, $result)
+    public function onSuccess($service, $result, $resultFormatted)
     {
         $successEvent = new OnSuccessEvent();
         $successEvent->service = $service;
         $successEvent->result = $result;
+        $successEvent->resultFormatted = $resultFormatted;
 
         $this->trigger(self::EVENT_ON_SUCCESS, $successEvent);
     }
@@ -174,12 +180,19 @@ abstract class BaseAction extends BaseActionYii2
             $result = $ex;
         }
 
-        if ($this->resultIsFailure($result)) {
-            $this->onFail($service);
-        } else {
-            $this->onSuccess($service, $result);
+        $fail = $this->resultIsFailure($result);
+
+        $resultFormatted = $result;
+        if ($formatter instanceof IFormatter) {
+            $resultFormatted = $formatter->format($service, $result);
         }
 
-        return $formatter instanceof IFormatter ? $formatter->format($service, $result) : $result;
+        if ($fail) {
+            $this->onFail($service, $result, $resultFormatted);
+        } else {
+            $this->onSuccess($service, $result, $resultFormatted);
+        }
+
+        return $result;
     }
 }
