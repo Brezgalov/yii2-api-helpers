@@ -3,7 +3,7 @@
 namespace Brezgalov\ApiHelpers\v2;
 
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
-use Brezgalov\ApiHelpers\v2\Events\Action\OnFailEvent;
+use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnSuccessEvent;
 use yii\base\InvalidConfigException;
 use yii\base\Action as BaseActionYii2;
@@ -87,7 +87,8 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onFail($service, $result, $resultFormatted)
     {
-        $failEvent = new OnFailEvent();
+        $failEvent = new OnResponseEvent();
+        $failEvent->isFail = true;
         $failEvent->service = $service;
         $failEvent->result = $result;
         $failEvent->resultFormatted = $resultFormatted;
@@ -102,7 +103,8 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onSuccess($service, $result, $resultFormatted)
     {
-        $successEvent = new OnSuccessEvent();
+        $successEvent = new OnResponseEvent();
+        $successEvent->isFail = false;
         $successEvent->service = $service;
         $successEvent->result = $result;
         $successEvent->resultFormatted = $resultFormatted;

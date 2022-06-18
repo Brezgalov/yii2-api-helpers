@@ -4,8 +4,13 @@ namespace Brezgalov\ApiHelpers\v2\Events\Action;
 
 use \yii\base\Event;
 
-class OnSuccessEvent extends Event
+class OnResponseEvent extends Event
 {
+    /**
+     * @var bool
+     */
+    public $isFail;
+
     /**
      * @var object
      */
