@@ -272,18 +272,164 @@ _(Апи часто требует "админку" для существова�
         ];
     }
 
-## TransactionBehavior
-
-_Я обязательно допишу этот док попозже_
-
-## MutexBehavior
-
-_Я обязательно допишу этот док попозже_
-
-## DelayedEventsBehavior
-
-_Я обязательно допишу этот док попозже_
-
 ## Работа с web-формами
 
-_Я обязательно допишу этот док попозже_
+**RenderAction** отвечает за отрисовку страниц и обладает настройками для подключения/отключения 
+**layout**, **заголовка страницы**, указания **view** и **режима отрисовки** (по-умолчанию / отрисовка файла / ajax-отрисовка)
+
+    class RenderAction extends BaseAction
+    {
+        /**
+        * @var bool
+        */
+        public $layout = true;
+    
+        /**
+         * @var string
+         */
+        public $title;
+    
+        /**
+         * @var string
+         */
+        public $view;
+    
+        /**
+         * @var string
+         */
+        public $mode = ViewResultFormatter::RENDER_MODE_DEFAULT;
+    
+        /**
+         * @var ViewContextInterface|string|array
+         */
+        public $viewContext;
+    
+        /**
+         * @var IFormatter
+         */
+        public $formatter = ViewResultFormatter::class;
+
+        ...
+    }
+    
+Пример реализации **ViewContext**
+
+    class ViewContext implements ViewContextInterface
+    {
+        /**
+         * @return string the view path that may be prefixed to a relative view name.
+         */
+        public function getViewPath()
+        {
+            return __DIR__;
+        }
+    }
+
+Для передачи данных на **view** используется интерфейс **IRenderFormatterDTO**.
+
+Можно использовать вариант реализации при котором сервис возвращает объект **DTO** наследующий этот интерфейс.
+Или, что проще, можно создать сервис ***Page**, который наследовать этот интерфейс и возвращать сам себя
+
+Пример сервиса ***Page**:
+
+    class RightsTablePage extends Model implements IRenderFormatterDTO, IRegisterInputInterface
+    {
+        const PAGE_PREPARE_METHOD = 'preparePageData';
+    
+        /**
+         * @var RightsTableDto
+         */
+        protected $tableDto;
+    
+        /**
+         * @var RightsTableFactory
+         */
+        public $rightsTableFactory;
+    
+        /**
+         * RightsTablePage constructor.
+         * @param array $config
+         */
+        public function __construct($config = [])
+        {
+            parent::__construct($config);
+    
+            if (empty($this->rightsTableFactory)) {
+                $this->rightsTableFactory = new RightsTableFactory();
+            }
+        }
+    
+        /**
+         * @return RightsTableDto[]
+         */
+        public function getViewParams()
+        {
+            return [
+                'tableDto' => $this->tableDto,
+                'tableErrors' => $this->submitRightsService->getErrorSummary(true),
+            ];
+        }
+    
+        /**
+         * @param array $data
+         * @return bool
+         */
+        public function registerInput(array $data = [])
+        {
+            $this->submitRightsService->registerInput($data);
+    
+            return true;
+        }
+    
+        /**
+         * @return $this
+         */
+        public function preparePageData()
+        {
+            $this->tableDto = $this->rightsTableFactory->buildTableDto();
+    
+            return $this;
+        }
+    }
+
+**::getViewParams()** - отвечает за передачу данных на **view**
+
+**::registerInput()** - отвечает за регистрацию пользовательского ввода
+
+**::preparePageData()** - отвечает за подготовку данных
+
+Пример использования:
+
+    public function actions()
+    {
+        return [
+            'get-table' => [
+                'class' => RenderAction::class,
+                'service' => RightsTablePage::class,
+                'methodName' => RightsTablePage::PAGE_PREPARE_METHOD,
+                'title' => 'Таблица ролей и разрешений',
+                'view' => 'RightsTable/View',
+                'viewContext' => ViewContext::class,
+            ],
+        ];
+    }
+
+Для обработки **submit'a** формы я предлагаю использовать **SubmitRenderAction**. 
+Он работает аналогично **RenderAction**, это позволяет отрисовать форму снова с 
+отображением ошибок, если такие произошли. Параметр **successRedirectRoute** позволяет
+указать маршрут для перехода при успешном **submit**.
+
+Пример подключения **SubmitRenderAction**:
+
+    [
+        'class' => SubmitRenderAction::class,
+        'service' => RightsTablePage::class,
+        'methodName' => RightsTablePage::SUBMIT_TABLE_METHOD,
+        'title' => 'Таблица ролей и разрешений',
+        'successRedirectRoute' => 'rights-table/index',
+        'view' => 'RightsTable/View',
+        'viewContext' => ViewContext::class,
+    ],
+
+
+Более подробно можно посмотреть пример использования **RenderAction** в репозитории [brezgalov/yii2-rights-manager](https://github.com/Brezgalov/yii2-rights-manager)
