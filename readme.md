@@ -192,40 +192,7 @@ _(Апи часто требует "админку" для существова�
 
 Обработка ошибок API происходит, когда метод сервиса возвращает false.
 
-Вывести ошибку можно с применением объекта ErrorException или использовать метод **Model::addError($attribute, $error)**
-
-    public function format($service, $result)
-    {
-        if ($result instanceof ErrorException && $this->response) {
-        $response = clone $this->response;
-
-            $response->data = $result->error;
-            $response->setStatusCode($result->statusCode);
-
-            return $response;
-        }
-
-        if ($result instanceof \Exception) {
-            throw $result;
-        }
-
-        if ($result === false) {
-            $errorModel = $service;
-
-            if ($service && $errorModel instanceof Model) {
-                if (!$service->hasErrors()) {
-                    $service->addError(static::class, $this->unknownExecutionErrorText);
-                }
-            } else {
-                $errorModel = new Model();
-                $service->addError(static::class, $this->unknownExecutionErrorText);
-            }
-
-            return $errorModel;
-        }
-
-        return $result;
-    }
+Вывести ошибку можно с применением объекта **Brezgalov\ApiHelpers\v2\ErrorException** или использовать метод **Model::addError($attribute, $error)**
 
 **ErrorException** позволяет самостоятельно выбрать формат ошибки и код ответа. 
 
