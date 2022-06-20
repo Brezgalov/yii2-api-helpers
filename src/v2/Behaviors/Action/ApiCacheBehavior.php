@@ -79,6 +79,10 @@ class ApiCacheBehavior extends Behavior
         if (empty($this->cacheComponent) && \Yii::$app->has('cache')) {
             $this->cacheComponent = \Yii::$app->cache;
         }
+
+        if (empty($this->identityComponent) && \Yii::$app->has('user')) {
+            $this->identityComponent = \Yii::$app->user;
+        }
     }
 
     /**
