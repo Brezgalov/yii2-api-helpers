@@ -3,11 +3,11 @@
 namespace Brezgalov\ApiHelpers\v2\Behaviors\Action;
 
 use app\forms\MyExampleRepositoryService;
-use Brezgalov\ApiHelpers\v2\ApiGetAction;
 use Brezgalov\ApiHelpers\v2\BaseAction;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
 use yii\base\Behavior;
 use yii\caching\CacheInterface;
+use yii\web\User;
 
 /**
  * Class ApiCacheBehavior
@@ -49,9 +49,19 @@ class ApiCacheBehavior extends Behavior
     public $cacheFailures = true;
 
     /**
+     * @var bool
+     */
+    public $byUserId = false;
+
+    /**
      * @var CacheInterface
      */
     public $cacheComponent;
+
+    /**
+     * @var User
+     */
+    public $identityComponent;
 
     /**
      * @var callable
@@ -102,13 +112,27 @@ class ApiCacheBehavior extends Behavior
      */
     protected function buildCacheKey()
     {
+        $userBinding = '';
+        if ($this->byUserId) {
+            $userBinding = $this->getUserId() . '@';
+        }
+
         $controllerName = \Yii::$app->controller->id;
         $actionName = \Yii::$app->controller->action ? \Yii::$app->controller->action->id : 'undefined';
 
         $params = \Yii::$app->request->getQueryParams();
         ksort($params);
 
-        return "{$controllerName}/{$actionName}?params=" . serialize($params);
+        return "{$userBinding}{$controllerName}/{$actionName}?params=" . serialize($params);
+    }
+
+    /**
+     * @return int|null
+     */
+    protected function getUserId()
+    {
+        return $this->identityComponent ? $this->identityComponent->getId() : null;
+
     }
 
     /**
