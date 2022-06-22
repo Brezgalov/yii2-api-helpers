@@ -29,6 +29,11 @@ class ApiSearchAction extends ApiGetAction
     public $dataProviderSetup = [];
 
     /**
+     * @var callable
+     */
+    public $afterDataProviderInit;
+
+    /**
      * ApiSearchAction constructor.
      * @param $id
      * @param $controller
@@ -42,6 +47,7 @@ class ApiSearchAction extends ApiGetAction
             'class' => SearchAdapterService::class,
             'searchModel' => $this->searchModel,
             'dataProviderSetup' => $this->getDataProviderSetup(),
+            'afterDataProviderInit' => $this->afterDataProviderInit,
         ];
     }
 
