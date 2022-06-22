@@ -42,21 +42,28 @@ _(Апи часто требует "админку" для существова�
     public function actions()
     {
         return [
+            'list' => [
+                'class' => ApiGetAction::class,
+                'service' => MyExampleRepositoryService::class,
+                'methodName' => MyExampleRepositoryService::METHOD_LIST,
+            ],
+
+            'cities' => [
+                'class' => ApiActiveGetAction::class,
+                'service' => KladrCitiesSearch::class,
+            ],
+
             'regions' => [
-                'class' => ApiSearchAction::class,
-                'searchModel' => KladrRegionsSearch::class,
+                'class' => ApiActiveGetAction::class,
+                'service' => KladrRegionsSearch::class,
                 'dataProviderSetup' => [
                     'pagination' => false,
                 ],
                 'afterDataProviderInit' => function(ActiveDataProvider $dataProvider) {
                     $dataProvider->sort->defaultOrder = ['name' => SORT_DESC];
+    
                     return $dataProvider;
                 },
-            ],
-            'list' => [
-                'class' => ApiGetAction::class,
-                'service' => MyExampleRepositoryService::class,
-                'methodName' => MyExampleRepositoryService::METHOD_LIST,
             ],
         ];
     }
