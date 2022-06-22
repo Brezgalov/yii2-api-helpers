@@ -2,6 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\ISearch;
 use Brezgalov\ApiHelpers\v2\Formatters\ActiveDataProviderFormatter;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -11,7 +12,7 @@ class ApiActiveGetAction extends ApiGetAction
     /**
      * @var string
      */
-    public $methodName = 'getQuery';
+    public $methodName = ISearch::SEARCH_METHOD;
 
     /**
      * @var string
