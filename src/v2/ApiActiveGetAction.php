@@ -2,21 +2,15 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
-use Brezgalov\ApiHelpers\v2\Services\SearchAdapterService;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 
-class ApiSearchAction extends ApiGetAction
+class ApiActiveGetAction extends ApiGetAction
 {
-    /**
-     * @var array|string
-     */
-    public $searchModel;
-
     /**
      * @var string
      */
-    public $methodName = SearchAdapterService::SEARCH_METHOD;
+    public $methodName = 'getQuery';
 
     /**
      * @var string
@@ -43,9 +37,8 @@ class ApiSearchAction extends ApiGetAction
     {
         parent::__construct($id, $controller, $config);
 
-        $this->service = [
-            'class' => SearchAdapterService::class,
-            'searchModel' => $this->searchModel,
+        $this->formatter = [
+            'class' => ActiveDataProviderFormatter::class,
             'dataProviderSetup' => $this->getDataProviderSetup(),
             'afterDataProviderInit' => $this->afterDataProviderInit,
         ];
