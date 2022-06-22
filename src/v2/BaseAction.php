@@ -195,6 +195,6 @@ abstract class BaseAction extends BaseActionYii2
             $this->onSuccess($service, $result, $resultFormatted);
         }
 
-        return $result;
+        return $resultFormatted;
     }
 }
