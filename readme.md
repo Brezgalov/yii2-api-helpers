@@ -42,7 +42,18 @@ _(Апи часто требует "админку" для существова�
     public function actions()
     {
         return [
-            'index' => [
+            'regions' => [
+                'class' => ApiSearchAction::class,
+                'searchModel' => KladrRegionsSearch::class,
+                'dataProviderSetup' => [
+                    'pagination' => false,
+                ],
+                'afterDataProviderInit' => function(ActiveDataProvider $dataProvider) {
+                    $dataProvider->sort->defaultOrder = ['name' => SORT_DESC];
+                    return $dataProvider;
+                },
+            ],
+            'list' => [
                 'class' => ApiGetAction::class,
                 'service' => MyExampleRepositoryService::class,
                 'methodName' => MyExampleRepositoryService::METHOD_LIST,
@@ -51,14 +62,21 @@ _(Апи часто требует "админку" для существова�
     }
 
 Для разработки API я предлагаю использовать два вида **action**:
-* **ApiGetAction** - для вывода информации
+* **ApiSearchAction** - для вывода списков с помощью **ActiveDataProvider** и **ISearch**
+* **ApiGetAction** - для вывода любой информации
 * **ApiPostAction** - для работы логики
 
 > _ApiGetAction и ApiPostAction отличаются набором поведений внутри. Cм. секцию "Поведения для action"
 
-При подключении **action** используется 2 параметра:
+При подключении **ApiGetAction**/**ApiPostAction** **action** используется 2 параметра:
+
 * **service** - Конфигурация класса сервиса
 * **methodName** - Строка, обозначающая метод сервиса, который необходимо вызвать
+
+При подключении **ApiSearchAction** можно указать:
+* **searchModel** - Модель, реализующая интерфейс **ISearch**, на основе нее формируется запрос
+* **dataProviderSetup** - Массив настроек **DataProviderInterface**
+* **afterDataProviderInit** - Callback для редактирования уже собранного **DataProviderInterface**
 
 Код сервиса **MyExampleRepositoryService**:
 
