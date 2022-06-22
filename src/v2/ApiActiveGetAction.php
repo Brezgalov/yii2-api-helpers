@@ -2,6 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\v2\Formatters\ActiveDataProviderFormatter;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 
