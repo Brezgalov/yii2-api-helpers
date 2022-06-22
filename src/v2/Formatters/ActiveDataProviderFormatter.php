@@ -1,6 +1,6 @@
 <?php
 
-namespace Brezgalov\ApiHelpers\v2;
+namespace Brezgalov\ApiHelpers\v2\Formatters;
 
 use Brezgalov\ApiHelpers\v2\Formatters\ModelResultFormatter;
 use yii\data\ActiveDataProvider;
