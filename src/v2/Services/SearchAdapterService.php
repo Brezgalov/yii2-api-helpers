@@ -78,7 +78,7 @@ class SearchAdapterService extends Model implements IRegisterInputInterface
             return false;
         }
 
-        $dataProviderSetup = $this->dataProviderSetup;
+        $dataProviderSetup = is_array($this->dataProviderSetup) ? $this->dataProviderSetup : ['class' => $this->dataProviderSetup];
         $dataProviderSetup['query'] = $this->searchModelInited->getQuery();
 
         $dataProvider = \Yii::createObject($dataProviderSetup);
