@@ -2,7 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2\Formatters;
 
-use Brezgalov\DomainModel\ResultFormatters\IResultFormatter;
+use Brezgalov\ApiHelpers\v2\IFormatter;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\rest\Serializer;
@@ -15,7 +15,7 @@ use yii\web\Response;
  *
  * @package admin\modules\RightsManager\Services
  */
-class RestFormatter extends Component  implements IResultFormatter
+class RestFormatter extends Component  implements IFormatter
 {
     /**
      * @var string|array
