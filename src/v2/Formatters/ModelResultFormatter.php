@@ -6,6 +6,7 @@ use Brezgalov\ApiHelpers\v2\ErrorException;
 use Brezgalov\ApiHelpers\v2\IFormatter;
 use yii\base\Component;
 use yii\base\Model;
+use yii\rest\Serializer;
 use yii\web\Response;
 
 class ModelResultFormatter extends Component implements IFormatter
@@ -41,9 +42,10 @@ class ModelResultFormatter extends Component implements IFormatter
      */
     public function format($service, $result)
     {
-        if ($result instanceof ErrorException && $this->response) {
-            $response = clone $this->response;
+        $response = clone $this->response;
+        $response->format = Response::FORMAT_JSON;
 
+        if ($result instanceof ErrorException && $this->response) {
             $response->data = $result->error;
             $response->setStatusCode($result->statusCode);
 
@@ -66,9 +68,11 @@ class ModelResultFormatter extends Component implements IFormatter
                 $service->addError(static::class, $this->unknownExecutionErrorText);
             }
 
-            return $errorModel;
+            $result = $errorModel;
         }
 
-        return $result;
+        $response->data = $result;
+
+        return $response;
     }
 }
