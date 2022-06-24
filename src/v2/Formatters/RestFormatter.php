@@ -11,6 +11,7 @@ use yii\web\Response;
 /**
  * Class RestFormatter
  * Добавляет \yii\rest\Serializer к отформатированному ответу
+ * Может быть использован для добавления API action'ов в контроллер не наследованный от \yii\rest\Controller
  *
  * @package admin\modules\RightsManager\Services
  */
