@@ -22,6 +22,11 @@ class ModelResultFormatter extends Component implements IFormatter
     public $response;
 
     /**
+     * @var array|string
+     */
+    public $serializer = Serializer::class;
+
+    /**
      * ApiHelpersLibResultFormatter constructor.
      * @param array $config
      */
@@ -71,7 +76,12 @@ class ModelResultFormatter extends Component implements IFormatter
             $result = $errorModel;
         }
 
-        $response->data = $result;
+        if ($this->serializer) {
+            /** @var Serializer $serializer */
+            $serializer = \Yii::createObject($this->serializer);
+            $serializer->response = $response;
+            $response->data = $serializer->serialize($result);
+        }
 
         return $response;
     }
