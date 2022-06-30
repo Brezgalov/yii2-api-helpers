@@ -44,7 +44,7 @@ class SendContentFormatter extends ModelResultFormatter implements IFormatter
     public function format($service, $result)
     {
         if ($result === false) {
-            parent::format($service, $result);
+            return parent::format($service, $result);
         }
 
         $response = clone $this->response;

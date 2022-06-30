@@ -50,7 +50,7 @@ class SendFileFormatter extends ModelResultFormatter implements IFormatter
     public function format($service, $result)
     {
         if ($result === false) {
-            parent::format($service, $result);
+            return parent::format($service, $result);
         }
 
         if (!is_string($result)) {
