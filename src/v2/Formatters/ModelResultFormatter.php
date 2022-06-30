@@ -6,7 +6,6 @@ use Brezgalov\ApiHelpers\v2\ErrorException;
 use Brezgalov\ApiHelpers\v2\IFormatter;
 use yii\base\Component;
 use yii\base\Model;
-use yii\rest\Serializer;
 use yii\web\Response;
 
 class ModelResultFormatter extends Component implements IFormatter
@@ -20,11 +19,6 @@ class ModelResultFormatter extends Component implements IFormatter
      * @var Response
      */
     public $response;
-
-    /**
-     * @var array|string
-     */
-    public $serializer = Serializer::class;
 
     /**
      * ApiHelpersLibResultFormatter constructor.
@@ -48,7 +42,6 @@ class ModelResultFormatter extends Component implements IFormatter
     public function format($service, $result)
     {
         $response = clone $this->response;
-        $response->format = Response::FORMAT_JSON;
 
         if ($result instanceof ErrorException && $this->response) {
             $response->data = $result->error;
@@ -76,13 +69,6 @@ class ModelResultFormatter extends Component implements IFormatter
             $result = $errorModel;
         }
 
-        if ($this->serializer) {
-            /** @var Serializer $serializer */
-            $serializer = \Yii::createObject($this->serializer);
-            $serializer->response = $response;
-            $response->data = $serializer->serialize($result);
-        }
-
-        return $response;
+        return $result;
     }
 }
