@@ -50,7 +50,7 @@ class SubmitRenderAction extends RenderAction
     /**
      * @return array
      */
-    public function getDefaultBehaviors()
+    protected function getDefaultBehaviors()
     {
         return [
             static::BEHAVIOR_KEY_TRANSACTION => TransactionBehavior::class,
