@@ -22,19 +22,14 @@ use yii\helpers\Url;
  */
 class SubmitRenderAction extends RenderAction
 {
+    const BEHAVIOR_KEY_TRANSACTION = 'transaction';
+    const BEHAVIOR_KEY_MUTEX = 'mutex';
+    const BEHAVIOR_KEY_DELAYED_EVENTS = 'delayedEvents';
+
     /**
      * @var string
      */
     public $successRedirectRoute;
-
-    /**
-     * @var array
-     */
-    public $behaviors = [
-        TransactionBehavior::class,
-        MutexBehavior::class,
-        DelayedEventsBehavior::class,
-    ];
 
     /**
      * CreateRoleSubmitFormAction constructor.
@@ -50,5 +45,17 @@ class SubmitRenderAction extends RenderAction
         ];
 
         parent::__construct($id, $controller, $config);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultBehaviors()
+    {
+        return [
+            static::BEHAVIOR_KEY_TRANSACTION => TransactionBehavior::class,
+            static::BEHAVIOR_KEY_MUTEX => MutexBehavior::class,
+            static::BEHAVIOR_KEY_DELAYED_EVENTS => DelayedEventsBehavior::class,
+        ];
     }
 }
