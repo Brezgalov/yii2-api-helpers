@@ -2,9 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2\Events\Action;
 
-use \yii\base\Event;
-
-class OnResponseEvent extends Event
+class OnResponseEvent extends BaseActionEvent
 {
     /**
      * @var bool

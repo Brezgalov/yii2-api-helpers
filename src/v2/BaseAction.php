@@ -2,6 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\v2\Events\Action\OnBeforeMethodEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnSuccessEvent;
@@ -37,6 +38,26 @@ abstract class BaseAction extends BaseActionYii2
     public $behaviors = [];
 
     /**
+     * @var string
+     */
+    public $beforeMethodEventConfig = OnBeforeMethodEvent::class;
+
+    /**
+     * @var string
+     */
+    public $onExceptionEventConfig = OnExceptionEvent::class;
+
+    /**
+     * @var string
+     */
+    public $onResponseFailEventConfig = OnResponseEvent::class;
+
+    /**
+     * @var string
+     */
+    public $onResponseSuccessEventConfig = OnResponseEvent::class;
+
+    /**
      * Action constructor.
      * @param string $id
      * @param $controller
@@ -62,11 +83,18 @@ abstract class BaseAction extends BaseActionYii2
     }
 
     /**
-     * void
+     * @param object $service
      */
-    public function beforeMethod()
+    public function beforeMethod(&$service)
     {
-        $this->trigger(self::EVENT_BEFORE_METHOD);
+        $beforeMethodEvent = Yii::createObject($this->beforeMethodEventConfig, [
+            'action' => $this,
+            'config' => [
+                'service' => &$service,
+            ],
+        ]);
+
+        $this->trigger(self::EVENT_BEFORE_METHOD, $beforeMethodEvent);
     }
 
     /**
@@ -74,8 +102,12 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onException($ex)
     {
-        $exEvent = new OnExceptionEvent();
-        $exEvent->ex = $ex;
+        $exEvent = Yii::createObject($this->onExceptionEventConfig, [
+            'action' => $this,
+            'config' => [
+                'ex' => $ex,
+            ],
+        ]);
 
         $this->trigger(self::EVENT_ON_EXCEPTION, $exEvent);
     }
@@ -87,11 +119,15 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onFail($service, $result, $resultFormatted)
     {
-        $failEvent = new OnResponseEvent();
-        $failEvent->isFail = true;
-        $failEvent->service = $service;
-        $failEvent->result = $result;
-        $failEvent->resultFormatted = $resultFormatted;
+        $failEvent = Yii::createObject($this->onResponseFailEventConfig, [
+            'action' => $this,
+            'config' => [
+                'isFail' => true,
+                'service' => $service,
+                'result' => $result,
+                'resultFormatted' => $resultFormatted,
+            ],
+        ]);
 
         $this->trigger(self::EVENT_ON_FAIL, $failEvent);
     }
@@ -103,11 +139,15 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onSuccess($service, $result, $resultFormatted)
     {
-        $successEvent = new OnResponseEvent();
-        $successEvent->isFail = false;
-        $successEvent->service = $service;
-        $successEvent->result = $result;
-        $successEvent->resultFormatted = $resultFormatted;
+        $successEvent = Yii::createObject($this->onResponseSuccessEventConfig, [
+            'action' => $this,
+            'config' => [
+                'isFail' => false,
+                'service' => $service,
+                'result' => $result,
+                'resultFormatted' => $resultFormatted,
+            ],
+        ]);
 
         $this->trigger(self::EVENT_ON_SUCCESS, $successEvent);
     }
@@ -162,9 +202,9 @@ abstract class BaseAction extends BaseActionYii2
         $result = null;
         $formatter = $this->getFormatter();
 
-        $this->beforeMethod();
+        $this->beforeMethod($service);
         try {
-            if ($service instanceof IRegisterInputInterface) {
+            if ($service instanceof IRegisterInput) {
                 $service->registerInput(array_merge(
                     Yii::$app->request->getBodyParams(),
                     Yii::$app->request->getQueryParams()

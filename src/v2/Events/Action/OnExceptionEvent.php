@@ -2,9 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2\Events\Action;
 
-use \yii\base\Event;
-
-class OnExceptionEvent extends Event
+class OnExceptionEvent extends BaseActionEvent
 {
     /**
      * @var \Exception
