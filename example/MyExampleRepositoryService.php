@@ -2,10 +2,10 @@
 
 namespace example;
 
-use Brezgalov\ApiHelpers\v2\IRegisterInputInterface;
+use Brezgalov\ApiHelpers\v2\IRegisterInput;
 use yii\base\Model;
 
-class MyExampleRepositoryService extends Model implements IRegisterInputInterface
+class MyExampleRepositoryService extends Model implements IRegisterInput
 {
     const METHOD_LIST = 'listData';
 
