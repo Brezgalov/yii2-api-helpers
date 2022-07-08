@@ -5,6 +5,7 @@ namespace Brezgalov\ApiHelpers\v2\Formatters;
 use Brezgalov\ApiHelpers\v2\Formatters\ModelResultFormatter;
 use Brezgalov\ApiHelpers\v2\IFormatter;
 use yii\web\Response;
+use Exception;
 
 class SendContentFormatter extends ModelResultFormatter implements IFormatter
 {
@@ -43,7 +44,7 @@ class SendContentFormatter extends ModelResultFormatter implements IFormatter
      */
     public function format($service, $result)
     {
-        if ($result === false) {
+        if ($result === false || $result instanceof Exception) {
             return parent::format($service, $result);
         }
 
