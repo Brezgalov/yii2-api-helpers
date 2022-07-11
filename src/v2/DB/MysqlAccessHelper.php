@@ -9,6 +9,11 @@ use yii\helpers\ArrayHelper;
 abstract class MysqlAccessHelper implements IDataAccessHelper
 {
     /**
+     * @var string
+     */
+    public $querySetup = Query::class;
+
+    /**
      * @return string
      */
     public static function getPrimaryKeyName()
@@ -26,7 +31,7 @@ abstract class MysqlAccessHelper implements IDataAccessHelper
      */
     public function query()
     {
-        return (new Query())
+        return \Yii::createObject($this->querySetup)
             ->select('*')
             ->from(static::getTable());
     }
