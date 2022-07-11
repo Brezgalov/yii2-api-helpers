@@ -204,7 +204,7 @@ abstract class BaseAction extends BaseActionYii2
 
         $this->beforeMethod($service);
         try {
-            if ($service instanceof IRegisterInput) {
+            if ($service instanceof IRegisterInput || $service instanceof IRegisterInputInterface) {
                 $service->registerInput(array_merge(
                     Yii::$app->request->getBodyParams(),
                     Yii::$app->request->getQueryParams()
