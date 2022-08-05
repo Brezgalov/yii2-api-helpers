@@ -2,10 +2,11 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\IApiInputForm;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnBeforeMethodEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
-use Brezgalov\ApiHelpers\v2\Events\Action\OnSuccessEvent;
+use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\base\Action as BaseActionYii2;
 use Yii;
@@ -15,7 +16,10 @@ abstract class BaseAction extends BaseActionYii2
     const EVENT_BEFORE_METHOD = 'beforeMethod';
     const EVENT_ON_EXCEPTION = 'onException';
     const EVENT_ON_FAIL = 'onFail';
+    const EVENT_AFTER_FAIL = 'afterFail';
     const EVENT_ON_SUCCESS = 'onSuccess';
+    const EVENT_AFTER_SUCCESS = 'afterSuccess';
+    const EVENT_AFTER_ACTION = 'afterAction';
 
     /**
      * @var string|array|object
@@ -87,6 +91,7 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function beforeMethod(&$service)
     {
+        /** @var OnBeforeMethodEvent $beforeMethodEvent */
         $beforeMethodEvent = Yii::createObject($this->beforeMethodEventConfig, [
             'action' => $this,
             'config' => [
@@ -102,6 +107,7 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onException($ex)
     {
+        /** @var OnExceptionEvent $exEvent */
         $exEvent = Yii::createObject($this->onExceptionEventConfig, [
             'action' => $this,
             'config' => [
@@ -119,6 +125,7 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onFail($service, $result, $resultFormatted)
     {
+        /** @var OnResponseEvent $failEvent */
         $failEvent = Yii::createObject($this->onResponseFailEventConfig, [
             'action' => $this,
             'config' => [
@@ -130,6 +137,8 @@ abstract class BaseAction extends BaseActionYii2
         ]);
 
         $this->trigger(self::EVENT_ON_FAIL, $failEvent);
+
+        $this->trigger(self::EVENT_AFTER_FAIL, $failEvent);
     }
 
     /**
@@ -139,6 +148,7 @@ abstract class BaseAction extends BaseActionYii2
      */
     public function onSuccess($service, $result, $resultFormatted)
     {
+        /** @var OnResponseEvent $successEvent */
         $successEvent = Yii::createObject($this->onResponseSuccessEventConfig, [
             'action' => $this,
             'config' => [
@@ -150,6 +160,22 @@ abstract class BaseAction extends BaseActionYii2
         ]);
 
         $this->trigger(self::EVENT_ON_SUCCESS, $successEvent);
+
+        $this->trigger(self::EVENT_AFTER_SUCCESS, $successEvent);
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    public function onAfterAction()
+    {
+        /** @var Event $event */
+        $event = Yii::createObject([
+            'class' => $event,
+            'sender' => $this,
+        ]);
+
+        $this->trigger(self::EVENT_AFTER_ACTION, $event);
     }
 
     /**
@@ -234,6 +260,8 @@ abstract class BaseAction extends BaseActionYii2
         } else {
             $this->onSuccess($service, $result, $resultFormatted);
         }
+
+        $this->onAfterAction();
 
         return $resultFormatted;
     }
