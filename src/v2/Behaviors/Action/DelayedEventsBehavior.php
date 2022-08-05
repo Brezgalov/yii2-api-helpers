@@ -15,7 +15,7 @@ class DelayedEventsBehavior extends Behavior
     public function events()
     {
         return [
-            BaseAction::EVENT_ON_SUCCESS => 'flush',
+            BaseAction::EVENT_AFTER_SUCCESS => 'flush',
         ];
     }
 
