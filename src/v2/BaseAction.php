@@ -6,7 +6,6 @@ use Brezgalov\ApiHelpers\IApiInputForm;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnBeforeMethodEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnExceptionEvent;
 use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
-use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\base\Action as BaseActionYii2;
 use Yii;
@@ -19,7 +18,6 @@ abstract class BaseAction extends BaseActionYii2
     const EVENT_AFTER_FAIL = 'afterFail';
     const EVENT_ON_SUCCESS = 'onSuccess';
     const EVENT_AFTER_SUCCESS = 'afterSuccess';
-    const EVENT_AFTER_ACTION = 'afterAction';
 
     /**
      * @var string|array|object
@@ -165,20 +163,6 @@ abstract class BaseAction extends BaseActionYii2
     }
 
     /**
-     * @throws InvalidConfigException
-     */
-    public function onAfterAction()
-    {
-        /** @var Event $event */
-        $event = Yii::createObject([
-            'class' => $event,
-            'sender' => $this,
-        ]);
-
-        $this->trigger(self::EVENT_AFTER_ACTION, $event);
-    }
-
-    /**
      * @return IFormatter|null
      */
     public function getFormatter()
@@ -260,8 +244,6 @@ abstract class BaseAction extends BaseActionYii2
         } else {
             $this->onSuccess($service, $result, $resultFormatted);
         }
-
-        $this->onAfterAction();
 
         return $resultFormatted;
     }
