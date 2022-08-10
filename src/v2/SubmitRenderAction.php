@@ -39,12 +39,14 @@ class SubmitRenderAction extends RenderAction
      */
     public function __construct($id, $controller, $config = [])
     {
-        $this->formatter = [
-            'class' => RenderOrRedirectFormatter::class,
-            'redirectUrl' => Url::toRoute($this->successRedirectRoute),
-        ];
-
         parent::__construct($id, $controller, $config);
+
+        if (empty($this->formatter)) {
+            $this->formatter = [
+                'class' => RenderOrRedirectFormatter::class,
+                'redirectUrl' => Url::toRoute($this->successRedirectRoute),
+            ];
+        }
     }
 
     /**
