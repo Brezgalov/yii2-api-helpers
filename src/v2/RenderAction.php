@@ -9,6 +9,8 @@ use yii\base\Model;
 
 class RenderAction extends BaseAction
 {
+    const BEHAVIOR_KEY_DELAYED_EVENTS = 'delayedEvents';
+
     /**
      * @var bool
      */
