@@ -2,6 +2,7 @@
 
 namespace Brezgalov\ApiHelpers\v2;
 
+use Brezgalov\ApiHelpers\v2\Behaviors\Action\DelayedEventsBehavior;
 use Brezgalov\ApiHelpers\v2\Formatters\ViewResultFormatter;
 use yii\base\ViewContextInterface;
 use yii\base\Model;
@@ -37,6 +38,16 @@ class RenderAction extends BaseAction
      * @var IFormatter
      */
     public $formatter = ViewResultFormatter::class;
+
+    /**
+     * @return array
+     */
+    protected function getDefaultBehaviors()
+    {
+        return [
+            static::BEHAVIOR_KEY_DELAYED_EVENTS => DelayedEventsBehavior::class,
+        ];
+    }
 
     /**
      * @return ViewResultFormatter|IFormatter|mixed|null
