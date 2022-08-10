@@ -32,6 +32,11 @@ class SubmitRenderAction extends RenderAction
     public $successRedirectRoute;
 
     /**
+     * @var array|string
+     */
+    public $formatter;
+
+    /**
      * CreateRoleSubmitFormAction constructor.
      * @param $id
      * @param $controller
