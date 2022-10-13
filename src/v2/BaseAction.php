@@ -171,7 +171,7 @@ abstract class BaseAction extends BaseActionYii2
             return null;
         }
 
-        if (is_string($this->formatter) || is_array($this->formatter)) {
+        if (!is_object($this->formatter)) {
             return Yii::createObject($this->formatter);
         } elseif ($this->formatter instanceof IFormatter) {
             return $this->formatter;
@@ -196,7 +196,7 @@ abstract class BaseAction extends BaseActionYii2
     public function run()
     {
         $service = $this->service;
-        if (is_string($service) || is_array($service)) {
+        if (!is_object($service)) {
             $service = Yii::createObject($service);
         }
 
