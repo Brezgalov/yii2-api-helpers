@@ -15,11 +15,11 @@ abstract class RequiredFieldModelValidator
     public static function validate(Model $model, array $fields, string $msg = ''): bool
     {
         $msg = $msg ?: 'Необходимо указать {attribute}';
-        $error = false;
+        $valid = true;
 
         foreach ($fields as $alias => $field) {
             if (empty($model->{$field})) {
-                $error = true;
+                $valid = false;
 
                 $model->addError(
                     is_string($alias) ? $alias : $field,
@@ -28,6 +28,6 @@ abstract class RequiredFieldModelValidator
             }
         }
 
-        return $error;
+        return $valid;
     }
 }
