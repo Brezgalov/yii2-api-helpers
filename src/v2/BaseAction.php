@@ -9,6 +9,7 @@ use Brezgalov\ApiHelpers\v2\Events\Action\OnResponseEvent;
 use yii\base\InvalidConfigException;
 use yii\base\Action as BaseActionYii2;
 use Yii;
+use yii\base\Model;
 
 abstract class BaseAction extends BaseActionYii2
 {
@@ -213,24 +214,8 @@ abstract class BaseAction extends BaseActionYii2
         $formatter = $this->getFormatter();
 
         $this->beforeMethod($service);
-        try {
-            if ($service instanceof IRegisterInput || $service instanceof IRegisterInputInterface) {
-                $service->registerInput(array_merge(
-                    Yii::$app->request->getBodyParams(),
-                    Yii::$app->request->getQueryParams()
-                ));
-            }
 
-            $result = call_user_func([$service, $methodName]);
-        } catch (\Exception $ex) {
-            $this->onException($ex);
-
-            if (empty($formatter)) {
-                throw $ex;
-            }
-
-            $result = $ex;
-        }
+        $result = $this->tryRun($service, $methodName);
 
         $fail = $this->resultIsFailure($result);
 
@@ -246,5 +231,31 @@ abstract class BaseAction extends BaseActionYii2
         }
 
         return $resultFormatted;
+    }
+
+    private function tryRun(object $service, string $methodName)
+    {
+        try {
+            if ($service instanceof IRegisterInput || $service instanceof IRegisterInputInterface) {
+                $service->registerInput(array_merge(
+                    Yii::$app->request->getBodyParams(),
+                    Yii::$app->request->getQueryParams()
+                ));
+            }
+
+            if ($service instanceof Model && $service->hasErrors()) {
+                return false;
+            }
+
+            return call_user_func([$service, $methodName]);
+        } catch (\Exception $ex) {
+            $this->onException($ex);
+
+            if (empty($formatter)) {
+                throw $ex;
+            }
+
+            return $ex;
+        }
     }
 }
