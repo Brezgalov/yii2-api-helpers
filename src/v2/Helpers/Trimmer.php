@@ -17,7 +17,9 @@ abstract class Trimmer
         }
 
         foreach ($keys as $key) {
-            $array[$key] = trim((string)$array[$key], $characters);
+            if (array_key_exists($key, $array)) {
+                $array[$key] = trim((string)$array[$key], $characters);
+            }
         }
 
         return $array;
