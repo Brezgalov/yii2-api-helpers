@@ -41,9 +41,9 @@ class ModelResultFormatter extends Component implements IFormatter
      */
     public function format($service, $result)
     {
-        $response = clone $this->response;
-
         if ($result instanceof ErrorException && $this->response) {
+            $response = clone $this->response;
+
             $response->data = $result->error;
             $response->setStatusCode($result->statusCode);
 
