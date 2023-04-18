@@ -49,7 +49,7 @@ class SubmitRenderAction extends RenderAction
         if (empty($this->formatter)) {
             $this->formatter = [
                 'class' => RenderOrRedirectFormatter::class,
-                'redirectUrl' => Url::toRoute($this->successRedirectRoute),
+                'redirectUrl' => $this->successRedirectRoute,
             ];
         }
     }
